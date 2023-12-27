@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"turbo-rate-limiter/strategy"
 )
 
 func limitedHandler(w http.ResponseWriter, req *http.Request) {
@@ -14,9 +15,13 @@ func unlimitedHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	//  curl http://127.0.0.1:8090/limited
 	http.HandleFunc("/limited", limitedHandler)
+	//  curl http://127.0.0.1:8090/unlimited
 	http.HandleFunc("/unlimited", unlimitedHandler)
 
-	//  curl http://127.0.0.1:8090/limited
+	// Configure simple token bucket
+	strategy.ConfigureTokenBucket(20, 30)
+
 	http.ListenAndServe(":8090", nil)
 }
